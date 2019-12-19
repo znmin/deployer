@@ -20,8 +20,8 @@ class DeployTest extends TestCase
     public function testExpectDeploy()
     {
         $config = [
-            'username' => '',
-            'password' => '',
+            'username' => 'vagrant',
+            'password' => 'vagrant',
             'remote' => 'origin',
             'branch' => 'master',
         ];

@@ -35,17 +35,52 @@ class ExpectAdapter extends Adapter
     {
         $this->expectMustInstalled();
 
-        $this->runDeploy();
+        $this->deployPathMustExists();
+
+        if ($this->loginIsSuccessful()) {
+            $this->runUserDeploy();
+
+        } else {
+            $this->runLocalDeploy();
+        }
     }
 
     /**
+     * 执行指定用户部署
+     *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
      */
-    protected function runDeploy()
+    protected function runUserDeploy()
     {
-        $process = new Process($this->buildDeployCommand());
+        $this->runDeploy($this->buildUserDeployCommand());
+    }
+
+    /**
+     * 执行本地部署命令
+     *
+     * @throws ExpectDeployException
+     * @throws \Znmin\Deployer\Exceptions\DeployException
+     */
+    protected function runLocalDeploy()
+    {
+        $this->runDeploy($this->buildLocalDeployCommand());
+    }
+
+    /**
+     * 执行部署
+     *
+     * @param  mixed  $deploy_command
+     * @throws ExpectDeployException
+     */
+    protected function runDeploy($deploy_command)
+    {
+        $process = new Process($deploy_command);
         $process->run();
+
+        var_dump($process->getCommandLine());
+        var_dump($process->getExitCode());
+        var_dump($process->getOutput());die;
 
         if (! $process->isSuccessful()) {
             if ($this->exit_code_map[$process->getExitCode()]) {
@@ -118,17 +153,51 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 判断 expect 是否安装.
+     * 判断部署目录是否存在
+     *
+     * @throws \Znmin\Deployer\Exceptions\DeployException
+     * @throws ExpectDeployException
+     */
+    protected function deployPathMustExists()
+    {
+        $process = Process::fromShellCommandline('cd ' . $this->getDeployPath());
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            throw new ExpectDeployException('deploy path not found.');
+        }
+    }
+
+    /**
+     * 判断部署用户是否登录成功
+     *
+     * @throws ExpectDeployException
+     */
+    protected function loginIsSuccessful()
+    {
+        $process = new Process([
+            '/usr/bin/expect',
+            __DIR__ . '/../../shells/login.sh',
+            $this->getUsername(),
+            $this->getPassword()
+        ]);
+        $process->run();
+
+        return $process->isSuccessful();
+    }
+
+    /**
+     * 构建指定用户部署命令
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
      */
-    protected function buildDeployCommand()
+    protected function buildUserDeployCommand()
     {
         return [
             // handle shell
             '/usr/bin/expect',
-            __DIR__ . "/../../shells/deploy.sh",
+            __DIR__ . "/../../shells/user_deploy.sh",
 
             // params
             $this->getUsername(),
@@ -136,6 +205,26 @@ class ExpectAdapter extends Adapter
             $this->getDeployPath(),
             $this->getBranch(),
             $this->getRemote(),
+        ];
+    }
+
+    /**
+     * 构建本地用户部署命令
+     *
+     * @throws ExpectDeployException
+     * @throws \Znmin\Deployer\Exceptions\DeployException
+     */
+    protected function buildLocalDeployCommand()
+    {
+        return [
+            // handle shell
+            '/bin/bash',
+            __DIR__ . "/../../shells/local_deploy.sh",
+
+            // params
+            $this->getDeployPath(),
+            $this->getRemote(),
+            $this->getBranch(),
         ];
     }
 }
