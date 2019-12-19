@@ -1,0 +1,21 @@
+{
+    "name": "znmin/deployer",
+    "license": "MIT",
+    "require": {
+        "php": ">=7.1",
+        "symfony/process": "^4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Znmin\\Deployer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Znmin\\Deployer\\Tests\\": "tests/"
+        }
+    }
+}
