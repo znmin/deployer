@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the znmin/laravel-deployer.
+ * This file is part of the znmin/deployer.
  *
  * (c) jimmy.xie <jimmy.xie@znmin.com>
  *
@@ -22,11 +22,11 @@ class ExpectAdapter extends Adapter
         2 => 'Process timeout.',
         3 => 'Username not found.',
         4 => 'Password error.',
-        5 => 'Not found deploy directory.'
+        5 => 'Not found deploy directory.',
     ];
 
     /**
-     * 执行部署
+     * 执行部署.
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
@@ -39,14 +39,13 @@ class ExpectAdapter extends Adapter
 
         if ($this->loginIsSuccessful()) {
             $this->runUserDeploy();
-
         } else {
             $this->runLocalDeploy();
         }
     }
 
     /**
-     * 执行指定用户部署
+     * 执行指定用户部署.
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
@@ -66,7 +65,7 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 执行本地部署命令
+     * 执行本地部署命令.
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
@@ -130,7 +129,7 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 判断 expect 是否安装
+     * 判断 expect 是否安装.
      *
      * @throws ExpectDeployException
      */
@@ -145,14 +144,14 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 判断部署目录是否存在
+     * 判断部署目录是否存在.
      *
      * @throws \Znmin\Deployer\Exceptions\DeployException
      * @throws ExpectDeployException
      */
     protected function deployPathMustExists()
     {
-        $process = Process::fromShellCommandline('cd ' . $this->getDeployPath());
+        $process = Process::fromShellCommandline('cd '.$this->getDeployPath());
         $process->run();
 
         if (! $process->isSuccessful()) {
@@ -169,9 +168,9 @@ class ExpectAdapter extends Adapter
     {
         $process = new Process([
             '/usr/bin/expect',
-            __DIR__ . '/../../shells/login.sh',
+            __DIR__.'/../../shells/login.sh',
             $this->getUsername(),
-            $this->getPassword()
+            $this->getPassword(),
         ]);
         $process->run();
 
@@ -179,7 +178,7 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 构建指定用户部署命令
+     * 构建指定用户部署命令.
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
@@ -189,7 +188,7 @@ class ExpectAdapter extends Adapter
         return [
             // handle shell
             '/usr/bin/expect',
-            __DIR__ . "/../../shells/user_deploy.sh",
+            __DIR__.'/../../shells/user_deploy.sh',
 
             // params
             $this->getUsername(),
@@ -201,7 +200,7 @@ class ExpectAdapter extends Adapter
     }
 
     /**
-     * 构建本地用户部署命令
+     * 构建本地用户部署命令.
      *
      * @throws ExpectDeployException
      * @throws \Znmin\Deployer\Exceptions\DeployException
