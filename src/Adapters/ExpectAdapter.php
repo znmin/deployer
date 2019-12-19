@@ -199,6 +199,6 @@ class ExpectAdapter extends Adapter
      */
     protected function buildLocalDeployCommand()
     {
-        return "cd /test{$this->getDeployPath()} && git pull {$this->getRemote()} {$this->getBranch()}";
+        return "cd {$this->getDeployPath()} && git pull {$this->getRemote()} {$this->getBranch()}";
     }
 }
