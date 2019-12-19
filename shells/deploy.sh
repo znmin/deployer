@@ -19,15 +19,15 @@ expect eof {exit 1} \
     timeout {exit 2} \
     "*orry" {exit 4} \
     "*uthentication failure*" {exit 4} \
-    "${username}" {send "cd ${deploy_path} && git pull ${remote} ${branch}"}
+    "${username}" {send "cd ${deploy_path} && git pull ${remote} ${branch} \r"}
 
 expect eof {exit 1} \
     timeout {exit 2} \
-    "yes/no)?" {send "yes\\r"} \
+    "yes/no)?" {send "yes\r"} \
     "*no such file or directory*" {exit 5} \
     "*From*" {exit}
 
 expect eof {exit 1} \
     timeout {exit 2} \
-    "Already up" {exit}
-
+    "Already up" {exit} \
+    "*From*" {exit}
