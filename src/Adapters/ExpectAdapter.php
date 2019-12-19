@@ -75,7 +75,11 @@ class ExpectAdapter extends Adapter
      */
     protected function getUsername()
     {
-        return $this->config['username'] ?? '';
+        if (! empty($this->config['username'])) {
+            return $this->config['username'];
+        }
+
+        throw new ExpectDeployException('expect username not defined.');
     }
 
     /**
