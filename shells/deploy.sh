@@ -17,17 +17,27 @@ expect eof {exit 1} \
 
 expect eof {exit 1} \
     timeout {exit 2} \
-    "*orry" {exit 4} \
-    "*uthentication failure*" {exit 4} \
-    "${username}" {send "cd ${deploy_path} && git pull ${remote} ${branch} \r"}
+    "*orry" {
+        send "cd ${deploy_path} && git pull ${remote} ${branch} \r"
+        expect eof exit
+    } \
+    "*uthentication failure*" {
+        send "cd ${deploy_path} && git pull ${remote} ${branch} \r"
+        expect eof exit
+    } \
+    "*" {send "cd ${deploy_path} && git pull ${remote} ${branch} \r"}
 
 expect eof {exit 1} \
     timeout {exit 2} \
     "yes/no)?" {send "yes\r"} \
+    "*ermission denied*" {exit 4} \
     "*no such file or directory*" {exit 5} \
     "*From*" {exit}
 
+
 expect eof {exit 1} \
     timeout {exit 2} \
-    "Already up" {exit} \
-    "*From*" {exit}
+    "*ermission denied*" {exit 4} \
+    "Already up" exit \
+    "*From*" exit
+
