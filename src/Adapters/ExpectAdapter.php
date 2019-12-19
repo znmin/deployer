@@ -17,14 +17,6 @@ use Znmin\Deployer\Exceptions\ExpectDeployException;
 
 class ExpectAdapter extends Adapter
 {
-    protected $exit_code_map = [
-        1 => 'Process ended abnormally.',
-        2 => 'Process timeout.',
-        3 => 'Username not found.',
-        4 => 'Password error.',
-        5 => 'Not found deploy directory.',
-    ];
-
     /**
      * 执行部署.
      *
@@ -56,10 +48,6 @@ class ExpectAdapter extends Adapter
         $process->run();
 
         if (! $process->isSuccessful()) {
-            if ($this->exit_code_map[$process->getExitCode()]) {
-                throw new ExpectDeployException($this->exit_code_map[$process->getExitCode()]);
-            }
-
             throw new ProcessFailedException($process);
         }
     }
