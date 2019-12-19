@@ -53,7 +53,16 @@ class ExpectAdapter extends Adapter
      */
     protected function runUserDeploy()
     {
-        $this->runDeploy($this->buildUserDeployCommand());
+        $process = new Process($this->buildUserDeployCommand());
+        $process->run();
+
+        if (! $process->isSuccessful()) {
+            if ($this->exit_code_map[$process->getExitCode()]) {
+                throw new ExpectDeployException($this->exit_code_map[$process->getExitCode()]);
+            }
+
+            throw new ProcessFailedException($process);
+        }
     }
 
     /**
@@ -64,30 +73,11 @@ class ExpectAdapter extends Adapter
      */
     protected function runLocalDeploy()
     {
-        $this->runDeploy($this->buildLocalDeployCommand());
-    }
-
-    /**
-     * 执行部署
-     *
-     * @param  mixed  $deploy_command
-     * @throws ExpectDeployException
-     */
-    protected function runDeploy($deploy_command)
-    {
-        $process = new Process($deploy_command);
+        $process = Process::fromShellCommandline($this->buildLocalDeployCommand());
         $process->run();
 
-        var_dump($process->getCommandLine());
-        var_dump($process->getExitCode());
-        var_dump($process->getOutput());die;
-
         if (! $process->isSuccessful()) {
-            if ($this->exit_code_map[$process->getExitCode()]) {
-                throw new ExpectDeployException($this->exit_code_map[$process->getExitCode()]);
-            }
-
-            throw new ProcessFailedException($process);
+            throw new ExpectDeployException('username or password error');
         }
     }
 
@@ -141,6 +131,8 @@ class ExpectAdapter extends Adapter
 
     /**
      * 判断 expect 是否安装
+     *
+     * @throws ExpectDeployException
      */
     protected function expectMustInstalled()
     {
@@ -216,15 +208,6 @@ class ExpectAdapter extends Adapter
      */
     protected function buildLocalDeployCommand()
     {
-        return [
-            // handle shell
-            '/bin/bash',
-            __DIR__ . "/../../shells/local_deploy.sh",
-
-            // params
-            $this->getDeployPath(),
-            $this->getRemote(),
-            $this->getBranch(),
-        ];
+        return "cd /test{$this->getDeployPath()} && git pull {$this->getRemote()} {$this->getBranch()}";
     }
 }
