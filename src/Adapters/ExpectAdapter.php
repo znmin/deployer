@@ -19,9 +19,10 @@ class ExpectAdapter extends Adapter
 {
     protected $exit_code_map = [
         1 => 'Process ended abnormally.',
-        2 => 'Process timeout',
-        3 => 'Username not found',
-        4 => 'Password error',
+        2 => 'Process timeout.',
+        3 => 'Username not found.',
+        4 => 'Password error.',
+        5 => 'Not found deploy directory.'
     ];
 
     /**
