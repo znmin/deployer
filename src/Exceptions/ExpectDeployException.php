@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the znmin/laravel-deployer.
+ * This file is part of the znmin/deployer.
  *
  * (c) jimmy.xie <jimmy.xie@znmin.com>
  *
